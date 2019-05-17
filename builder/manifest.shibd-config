@@ -1,0 +1,4 @@
+/bin/mv
+/bin/sed
+/usr/bin/awk
+/usr/bin/getent

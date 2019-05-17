@@ -1,0 +1,69 @@
+#!/usr/bin/env python2
+from __future__ import print_function
+
+import argparse
+import sys
+
+from os import readlink
+from os.path import abspath, basename, dirname, isabs, islink, join, lexists, realpath
+from sets import Set
+
+def args():
+    parser = argparse.ArgumentParser(description='Prints the '
+        'full path to a given name. For symlinks it follows every '
+        'component of the given name recursively, printing the full path to '
+        'each component.'
+    )
+    parser.add_argument('files', metavar='FILE', nargs='+',
+        help='a file to dereference'
+    )
+
+    arguments = parser.parse_args()
+    return arguments.files
+
+paths = Set()
+
+def print_parent_links(f):
+    full_path = abspath(f)
+    parent = dirname(full_path)
+
+    if parent != '/':
+        print_parent_links(parent)
+
+    if islink(parent):
+        printlink(parent, links_only=True)
+    
+def printlink(f, links_only=False):
+    while True:
+        if not lexists(f):
+            break
+
+        # Don't repeat ourselves!
+        full_path = abspath(f)
+        if full_path in paths:
+            return
+        paths.add(full_path)
+
+        print_parent_links(f)
+
+        if islink(f):
+            print(join(realpath(dirname(f)), basename(f)))
+            ln = readlink(f)
+            f = ln if isabs(ln) else join(realpath(dirname(f)), ln)
+        else:
+            if not links_only:
+                print(join(realpath(dirname(f)), basename(f)))
+            break
+
+def main():
+    files = args()
+
+    for f in files:
+        if lexists(f):
+            printlink(f)
+        else:
+            print("File", f, "does not exist!", file=sys.stderr)
+            exit(1)
+
+if __name__ == "__main__":
+    main()

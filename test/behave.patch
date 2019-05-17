@@ -1,0 +1,24 @@
+diff -rupN old_behave/runner.py new_behave/runner.py
+--- old_behave/runner.py	2019-01-16 11:34:27.000000000 -0600
++++ new_behave/runner.py	2019-01-16 11:34:14.000000000 -0600
+@@ -748,7 +748,7 @@ class Runner(ModelRunner):
+         base_dir = new_base_dir
+         self.config.base_dir = base_dir
+ 
+-        for dirpath, dirnames, filenames in os.walk(base_dir):
++        for dirpath, dirnames, filenames in os.walk(base_dir, followlinks=True):
+             if [fn for fn in filenames if fn.endswith(".feature")]:
+                 break
+         else:
+diff -rupN old_behave/runner_util.py new_behave/runner_util.py
+--- old_behave/runner_util.py	2019-01-16 11:34:27.000000000 -0600
++++ new_behave/runner_util.py	2019-01-16 11:34:14.000000000 -0600
+@@ -352,7 +352,7 @@ def collect_feature_locations(paths, str
+     locations = []
+     for path in paths:
+         if os.path.isdir(path):
+-            for dirpath, dirnames, filenames in os.walk(path):
++            for dirpath, dirnames, filenames in os.walk(path, followlinks=True):
+                 dirnames.sort()
+                 for filename in sorted(filenames):
+                     if filename.endswith(".feature"):

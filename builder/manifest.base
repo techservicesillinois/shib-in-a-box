@@ -1,0 +1,8 @@
+/bin/sh
+/bin/sleep
+/etc/group
+/etc/passwd
+/etc/pki/tls/certs/ca-bundle.crt
+/lib64/libnss_compat.so.2
+/lib64/libnss_dns.so.2
+/lib64/libnss_files.so.2

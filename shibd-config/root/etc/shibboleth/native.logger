@@ -1,0 +1,9 @@
+log4j.rootCategory=LOG_LEVEL, native_log
+log4j.category.XMLTooling.XMLObject=LOG_LEVEL
+log4j.category.XMLTooling.KeyInfoResolver=LOG_LEVEL
+log4j.category.Shibboleth.IPRange=LOG_LEVEL
+log4j.category.Shibboleth.PropertySet=LOG_LEVEL
+log4j.category.XMLTooling.libcurl=LOG_LEVEL
+log4j.appender.native_log=org.apache.log4j.ConsoleAppender
+log4j.appender.native_log.layout=org.apache.log4j.PatternLayout
+log4j.appender.native_log.layout.ConversionPattern=sp-native %d{%Y-%m-%d %H:%M:%S} %p %c %x: %m%n

@@ -1,0 +1,17 @@
+/bin/rm
+/etc/httpd/modules/mod_alias.so
+/etc/httpd/modules/mod_authn_core.so
+/etc/httpd/modules/mod_authz_core.so
+/etc/httpd/modules/mod_cgi.so
+/etc/httpd/modules/mod_cgid.so
+/etc/httpd/modules/mod_env.so
+/etc/httpd/modules/mod_log_config.so
+/etc/httpd/modules/mod_mpm_event.so
+/etc/httpd/modules/mod_proxy.so
+/etc/httpd/modules/mod_proxy_ajp.so
+/etc/httpd/modules/mod_remoteip.so
+/etc/httpd/modules/mod_rewrite.so
+/etc/httpd/modules/mod_unixd.so
+/usr/lib64/shibboleth/mod_shib_24.so
+/usr/sbin/httpd
+/usr/share/shibboleth/main.css

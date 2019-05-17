@@ -1,0 +1,100 @@
+version: "2"
+services:
+  alb:
+    read_only: true
+    image: $ORG/alb:$SHIB_IN_A_BOX_TAG
+    ports:
+      - "$PORT:8080"
+    networks:
+      - frontend
+    tmpfs:
+      - /var/run/nginx
+      - /var/cache/nginx
+  httpd:
+    environment:
+      ELMR_HOSTNAME: elmr
+      LB_HOSTNAME: alb
+      ENABLE_ELMR_CONFIG: $ENABLE_ELMR_CONFIG
+      ENABLE_DEBUG_PAGES: $ENABLE_DEBUG_PAGES
+      ENABLE_MOCK_SHIBD: $ENABLE_MOCK_SHIBD
+      AJP_displayName: John Doe
+      AJP_eppn: jkdoe@illinois.edu
+      AJP_Shib-Session-ID: 1234
+      REDIS_HOSTNAME: redis:6379
+    ports:
+      - "$HTTPD_PORT:8080"
+    depends_on:
+      - config
+    volumes_from:
+      - config:ro
+    image: $ORG/httpd:$SHIB_IN_A_BOX_TAG
+    networks:
+      - frontend
+      - backend
+  shibd:
+    read_only: true
+    image: $ORG/shibd:$SHIB_IN_A_BOX_TAG
+    depends_on:
+      - config
+      - cron
+    networks:
+      - backend
+    volumes_from:
+      - config:ro
+      - cron:ro
+  config:
+    image: $ORG/shibd-config:$SHIB_IN_A_BOX_TAG
+    environment:
+      HTTPD_HOSTNAME: httpd
+      SHIBD_HOSTNAME: shibd
+      REGION: us-east-2
+      SHIBD_LOG_LEVEL: INFO
+      MOD_SHIB_LOG_LEVEL: INFO
+      ENTITY_ID: https://multi-service.as-test.techservices.illinois.edu/shibboleth
+      SUPPORT_CONTACT: root@localhost
+    networks:
+      - backend
+    volumes:
+      - ~/.aws:/var/run/shibboleth/.aws:ro
+  cron:
+    read_only: true
+    environment:
+      - SECRET_ID=multi-service-shibd-data-sealer
+      - SCHEDULE=* * * * *
+      - LOG_LEVEL=INFO
+    image: $ORG/shibd-cron:$SHIB_IN_A_BOX_TAG
+    volumes:
+      - ~/.aws:/var/run/shibboleth/.aws:ro
+    networks:
+      - frontend
+  elmr:
+    read_only: true
+    environment:
+      REDIS_HOSTNAME: redis
+      DISABLE_SECURE_COOKIES: 'true'
+    image: $ORG/elmr:${ELMR_TAG}
+#    ports:
+#      - "8009:8009"
+    networks:
+      - backend
+  redis:
+    image: redis:4
+    ports:
+      - "$REDIS_PORT:6379"
+    networks:
+      - frontend
+      - backend
+  service:
+    read_only: true
+    image: $ORG/elmrsample:${ELMRSAMPLE_TAG}
+    environment:
+      REDIS_HOSTNAME: redis
+#    ports:
+#      - "8081:8081"
+    networks:
+      - frontend
+    tmpfs:
+      - /tmp
+networks:
+  frontend:
+  backend:

@@ -1,0 +1,14 @@
+.vagrant
+
+.image
+*.push
+*.pull
+
+cookie.txt
+
+*.so
+*.swp
+
+.python-version
+
+Pipfile*

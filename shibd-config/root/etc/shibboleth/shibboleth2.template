@@ -1,0 +1,61 @@
+<SPConfig xmlns="urn:mace:shibboleth:3.0:native:sp:config"
+    xmlns:conf="urn:mace:shibboleth:3.0:native:sp:config"
+    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+    xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"    
+    xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+    clockSkew="180">
+
+    <TCPListener address="SHIBD_IP" port="1600" acl="SHIBD_ACL"/>
+
+    <DataSealer type="Versioned" path="/var/shib-keys/keys"/>
+    <SessionCache type="StorageService" persistedAttributes="eppn displayName"/>
+
+    <!-- The ApplicationDefaults element is where most of Shibboleth's SAML bits are defined. -->
+    <ApplicationDefaults entityID="ENTITY_ID"
+                         REMOTE_USER="eppn persistent-id targeted-id"
+                         attributePrefix="AJP_"
+                         cipherSuites="ECDHE+AESGCM:ECDHE:!aNULL:!eNULL:!LOW:!EXPORT:!RC4:!SHA:!SSLv2">
+
+        <Sessions handlerURL="/auth/Shibboleth.sso" lifetime="28800" timeout="3600" relayState="ss:mem"
+                  checkAddress="false" handlerSSL="true" cookieProps="https">
+
+            <SSO entityID="urn:mace:incommon:uiuc.edu"
+                discoveryProtocol="SAMLDS" discoveryURL="">
+                SAML2 SAML1
+            </SSO>
+
+            <Logout>SAML2 Local</Logout>
+            
+            <Handler type="MetadataGenerator" Location="/Metadata" signing="false"/>
+            
+            <Handler type="Status" Location="/Status" acl="127.0.0.1 ::1"/>
+
+            <Handler type="Session" Location="/Session" showAttributeValues="false"/>
+
+            <Handler type="DiscoveryFeed" Location="/DiscoFeed"/>
+        </Sessions>
+
+        <Errors supportContact="SUPPORT_CONTACT"
+            styleSheet="/auth/shibboleth-sp/main.css"/>
+        
+         <MetadataProvider type="XML" url="https://discovery.itrust.illinois.edu/itrust-metadata/itrust-metadata.xml"
+                                backingFilePath="/tmp/itrust-metadata.xml" reloadInterval="7200">
+            <MetadataFilter type="RequireValidUntil" maxValidityInterval="2419200"/>
+            <MetadataFilter type="Signature" certificate="/etc/shibboleth/itrust.pem"/>
+        </MetadataProvider>
+
+        <AttributeExtractor type="XML" validate="true" reloadChanges="false" path="/etc/shibboleth/attribute-map.xml"/>
+        
+        <AttributeResolver type="Query" subjectMatch="true"/>
+
+        <AttributeFilter type="XML" validate="true" path="/etc/shibboleth/attribute-policy.xml"/>
+
+        <CredentialResolver type="File" key="/etc/shibboleth/sp-key.pem" certificate="/etc/shibboleth/sp-cert.pem"/>
+
+    </ApplicationDefaults>
+    
+    <SecurityPolicyProvider type="XML" validate="true" path="/etc/shibboleth/security-policy.xml"/>
+
+    <ProtocolProvider type="XML" validate="true" reloadChanges="false" path="/etc/shibboleth/protocols.xml"/>
+
+</SPConfig>
