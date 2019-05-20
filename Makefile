@@ -1,5 +1,5 @@
-export TAG := $(USER)
-export ORG := techservicesillinois
+export TAG ?= $(USER)
+export ORG ?= techservicesillinois
 export SHIB_IN_A_BOX_TAG := $(TAG)
 
 IMAGES := shibd-cron shibd-config shibd httpd
