@@ -1,6 +1,15 @@
-# illinois-shibboleth-sp-img
+# shib-in-a-box
 
 A Docker image of the Illinois Shibboleth Service Provider (SP).
+
+# End-of-Life date
+## The End-of-Life date of this product is December 31, 2021.
+
+**This module was created before OIDC support was available on the University of Illinois Shibboleth SP providers.**
+
+**With OIDC now supported, this module no longer 
+serves a meaningful purpose, and no further development or maintenance will take place.
+We are therefore establishing an End-of-Life date to make these intentions clear.**
 
 ## Developer build and test
 
